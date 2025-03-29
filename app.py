@@ -60,7 +60,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# 한글 폰트 설정 함수
 def set_korean_font():
     """한글 폰트를 설정하고 성공한 폰트 이름을 반환합니다."""
     try:
@@ -68,25 +67,10 @@ def set_korean_font():
         plt.rcParams['font.family'] = 'DejaVu Sans'
         plt.rcParams['axes.unicode_minus'] = False
         
-        # 시스템에서 사용 가능한 폰트 찾기
-        font_list = fm.findSystemFonts()
-        
-        # 선호하는 한글 폰트 목록
-        preferred_fonts = ['NanumGothic', 'Nanum Gothic', 'Malgun Gothic', 'AppleGothic', 'Noto Sans CJK KR']
-        
-        # 설치된 폰트 중에서 선호하는 폰트 찾기
-        for font_name in preferred_fonts:
-            matching_fonts = [f for f in font_list if font_name.lower() in f.lower()]
-            if matching_fonts:
-                font_path = matching_fonts[0]
-                font_prop = fm.FontProperties(fname=font_path)
-                plt.rcParams['font.family'] = font_prop.get_name()
-                st.success(f"한글 폰트 '{font_name}' 적용 완료")
-                return font_prop
-        
-        # 폰트를 찾지 못한 경우 기본 폰트 사용
-        st.warning("한글 폰트를 찾을 수 없어 기본 폰트를 사용합니다.")
-        return fm.FontProperties(family='DejaVu Sans')
+        # Google Fonts에서 나눔고딕 폰트 사용
+        plt.rcParams['font.family'] = 'Nanum Gothic'
+        st.success("나눔고딕 폰트가 적용되었습니다.")
+        return fm.FontProperties(family='Nanum Gothic')
         
     except Exception as e:
         st.error(f"폰트 설정 중 오류 발생: {str(e)}")
