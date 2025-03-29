@@ -175,10 +175,6 @@ def get_sheet_data(service, spreadsheet_id, range_name):
         # 컬럼명 설정
         df.columns = headers
         
-        # 디버깅을 위한 컬럼명 출력
-        st.write("현재 데이터프레임의 컬럼명:")
-        st.write(df.columns.tolist())
-        
         # 설문 문항 컬럼명 정리 (기존 컬럼명과 새로운 컬럼명 매핑)
         survey_columns = {
             '타임스탬프': '타임스탬프',
@@ -209,10 +205,6 @@ def get_sheet_data(service, spreadsheet_id, range_name):
         
         # 컬럼명 변경
         df = df.rename(columns=mapped_columns)
-        
-        # 디버깅을 위한 매핑된 컬럼명 출력
-        st.write("매핑된 컬럼명:")
-        st.write(df.columns.tolist())
         
         # 숫자형 데이터 변환
         numeric_columns = ['수업 기대도', '긴장도', '재미 예상도', '자신감', '집중도', 
