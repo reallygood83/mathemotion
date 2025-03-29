@@ -61,22 +61,44 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 def set_korean_font():
-    """한글 폰트를 설정하고 성공한 폰트 이름을 반환합니다."""
+    """시스템에 설치된 한글 폰트를 찾아 설정합니다."""
     try:
-        # 기본 폰트 설정
-        plt.rcParams['font.family'] = 'DejaVu Sans'
-        plt.rcParams['axes.unicode_minus'] = False
+        # 시스템에 설치된 모든 폰트 찾기
+        font_list = fm.findSystemFonts(fontpaths=None, fontext='ttf')
         
-        # Google Fonts에서 나눔고딕 폰트 사용
-        plt.rcParams['font.family'] = 'Nanum Gothic'
+        # 한글 폰트 목록 (우선순위 순)
+        korean_fonts = [
+            'NanumGothic',
+            'Malgun',
+            'AppleGothic',
+            'Noto Sans CJK KR',
+            'Noto Sans KR',
+            'NanumMyeongjo',
+            'NanumGothicCoding'
+        ]
         
-        # 폰트 설정 확인
-        font_path = fm.findfont(fm.FontProperties(family='Nanum Gothic'))
-        plt.rcParams['font.family'] = fm.FontProperties(fname=font_path).get_name()
+        # 설치된 한글 폰트 찾기
+        found_font = None
+        for font_name in korean_fonts:
+            matching_fonts = [f for f in font_list if font_name in f]
+            if matching_fonts:
+                found_font = matching_fonts[0]
+                break
         
-        st.success("나눔고딕 폰트가 적용되었습니다.")
-        return fm.FontProperties(fname=font_path)
-        
+        if found_font:
+            # 폰트 설정
+            font_prop = fm.FontProperties(fname=found_font)
+            plt.rcParams['font.family'] = font_prop.get_name()
+            plt.rcParams['axes.unicode_minus'] = False
+            st.success(f"한글 폰트가 적용되었습니다: {font_prop.get_name()}")
+            return font_prop
+        else:
+            # 한글 폰트를 찾지 못한 경우 기본 폰트 사용
+            plt.rcParams['font.family'] = 'DejaVu Sans'
+            plt.rcParams['axes.unicode_minus'] = False
+            st.warning("한글 폰트를 찾을 수 없어 기본 폰트를 사용합니다.")
+            return fm.FontProperties(family='DejaVu Sans')
+            
     except Exception as e:
         st.error(f"폰트 설정 중 오류 발생: {str(e)}")
         return fm.FontProperties(family='DejaVu Sans')
