@@ -17,7 +17,10 @@ st.set_page_config(page_title="학생 설문 분석 MCP", layout="wide")
 # 커스텀 CSS 스타일
 st.markdown("""
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&display=swap');
+
 .main-title {
+    font-family: 'Nanum Gothic', sans-serif;
     font-size: 2.5rem;
     color: #7D5A50;
     background: linear-gradient(45deg, #FF8C61, #F9C784);
@@ -27,7 +30,9 @@ st.markdown("""
     text-align: center;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
+
 .stButton>button {
+    font-family: 'Nanum Gothic', sans-serif;
     background-color: #F8A978;
     color: white;
     font-weight: bold;
@@ -36,10 +41,16 @@ st.markdown("""
     padding: 0.5rem 1rem;
     transition: all 0.3s;
 }
+
 .stButton>button:hover {
     background-color: #FF8C61;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* 모든 텍스트에 나눔고딕 적용 */
+* {
+    font-family: 'Nanum Gothic', sans-serif;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -55,8 +66,8 @@ def set_korean_font():
         # 시스템에서 사용 가능한 폰트 찾기
         font_list = fm.findSystemFonts()
         
-        # 선호하는 한글 폰트 목록
-        preferred_fonts = ['NanumGothic', 'Malgun Gothic', 'AppleGothic', 'Noto Sans CJK KR']
+        # 선호하는 한글 폰트 목록 (나눔고딕을 최우선으로)
+        preferred_fonts = ['NanumGothic', 'Nanum Gothic', 'Malgun Gothic', 'AppleGothic', 'Noto Sans CJK KR']
         
         # 설치된 폰트 중에서 선호하는 폰트 찾기
         for font_name in preferred_fonts:
@@ -68,9 +79,17 @@ def set_korean_font():
                 st.success(f"한글 폰트 '{font_name}' 적용 완료")
                 return font_prop
         
-        # 한글 폰트를 찾지 못한 경우
-        st.warning("한글 폰트를 찾을 수 없어 기본 폰트를 사용합니다.")
-        return fm.FontProperties(family='DejaVu Sans')
+        # 나눔고딕 폰트가 없는 경우 설치 시도
+        try:
+            import font_nanum
+            font_path = font_nanum.NANUM_GOTHIC
+            font_prop = fm.FontProperties(fname=font_path)
+            plt.rcParams['font.family'] = font_prop.get_name()
+            st.success("나눔고딕 폰트 설치 및 적용 완료")
+            return font_prop
+        except ImportError:
+            st.warning("나눔고딕 폰트를 설치할 수 없습니다. 기본 폰트를 사용합니다.")
+            return fm.FontProperties(family='DejaVu Sans')
         
     except Exception as e:
         st.error(f"폰트 설정 중 오류 발생: {str(e)}")
