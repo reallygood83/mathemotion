@@ -154,7 +154,7 @@ def get_sheet_data(service, spreadsheet_id, range_name):
             st.warning("데이터가 없습니다.")
             return None
             
-        # 설문 문항 컬럼명 정리
+        # 설문 문항 컬럼명 정리 (기존 컬럼명과 새로운 컬럼명 매핑)
         survey_columns = {
             '📌 학생 번호를 선택하세요.': '학번',
             '🧑‍🎓 학생 이름을 입력하세요.': '학생 이름',
@@ -171,7 +171,22 @@ def get_sheet_data(service, spreadsheet_id, range_name):
             '📋 ✏️ 오늘 배운 수학 내용을 한 줄로 요약해 보세요.': '수업 요약',
             '📋 💭 오늘 수업에서 스스로 잘한 점이나 아쉬운 점을 한 문장으로 적어 보세요.': '자기 평가',
             # 기존 컬럼명도 매핑에 추가
-            '타임스탬프': '타임스탬프'
+            '타임스탬프': '타임스탬프',
+            # 추가 매핑 (다른 가능한 컬럼명들)
+            '학생번호': '학번',
+            '이름': '학생 이름',
+            '기대도': '수업 기대도',
+            '긴장': '긴장도',
+            '재미': '재미 예상도',
+            '자신감도': '자신감',
+            '집중': '집중도',
+            '즐거움도': '즐거움',
+            '자신감변화': '자신감 변화',
+            '재미변화': '재미 변화',
+            '긴장도변화': '긴장도 변화',
+            '이해': '이해도',
+            '요약': '수업 요약',
+            '평가': '자기 평가'
         }
         
         # 헤더 행 가져오기
@@ -213,6 +228,13 @@ def get_sheet_data(service, spreadsheet_id, range_name):
         for col in numeric_columns:
             if col in df.columns:
                 df[col] = pd.to_numeric(df[col], errors='coerce')
+        
+        # 컬럼 존재 여부 확인 및 경고
+        missing_columns = [col for col in numeric_columns if col not in df.columns]
+        if missing_columns:
+            st.warning(f"다음 컬럼을 찾을 수 없습니다: {', '.join(missing_columns)}")
+            st.info("사용 가능한 컬럼 목록:")
+            st.write(df.columns.tolist())
         
         return df
     except Exception as e:
