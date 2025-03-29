@@ -69,8 +69,16 @@ def set_korean_font():
         
         # Google Fonts에서 나눔고딕 폰트 사용
         plt.rcParams['font.family'] = 'Nanum Gothic'
+        
+        # 폰트 캐시 초기화
+        fm._rebuild()
+        
+        # 폰트 설정 확인
+        font_path = fm.findfont(fm.FontProperties(family='Nanum Gothic'))
+        plt.rcParams['font.family'] = fm.FontProperties(fname=font_path).get_name()
+        
         st.success("나눔고딕 폰트가 적용되었습니다.")
-        return fm.FontProperties(family='Nanum Gothic')
+        return fm.FontProperties(fname=font_path)
         
     except Exception as e:
         st.error(f"폰트 설정 중 오류 발생: {str(e)}")
