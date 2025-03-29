@@ -20,7 +20,7 @@ st.markdown("""
 @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&display=swap');
 
 .main-title {
-    font-family: 'Nanum Gothic', sans-serif;
+    font-family: 'Nanum Gothic', sans-serif !important;
     font-size: 2.5rem;
     color: #7D5A50;
     background: linear-gradient(45deg, #FF8C61, #F9C784);
@@ -32,7 +32,7 @@ st.markdown("""
 }
 
 .stButton>button {
-    font-family: 'Nanum Gothic', sans-serif;
+    font-family: 'Nanum Gothic', sans-serif !important;
     background-color: #F8A978;
     color: white;
     font-weight: bold;
@@ -50,7 +50,12 @@ st.markdown("""
 
 /* 모든 텍스트에 나눔고딕 적용 */
 * {
-    font-family: 'Nanum Gothic', sans-serif;
+    font-family: 'Nanum Gothic', sans-serif !important;
+}
+
+/* Streamlit 기본 스타일 오버라이드 */
+.stMarkdown, .stText, .stSelectbox, .stRadio, .stNumberInput, .stTextInput, .stFileUploader {
+    font-family: 'Nanum Gothic', sans-serif !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -66,7 +71,7 @@ def set_korean_font():
         # 시스템에서 사용 가능한 폰트 찾기
         font_list = fm.findSystemFonts()
         
-        # 선호하는 한글 폰트 목록 (나눔고딕을 최우선으로)
+        # 선호하는 한글 폰트 목록
         preferred_fonts = ['NanumGothic', 'Nanum Gothic', 'Malgun Gothic', 'AppleGothic', 'Noto Sans CJK KR']
         
         # 설치된 폰트 중에서 선호하는 폰트 찾기
@@ -79,17 +84,9 @@ def set_korean_font():
                 st.success(f"한글 폰트 '{font_name}' 적용 완료")
                 return font_prop
         
-        # 나눔고딕 폰트가 없는 경우 설치 시도
-        try:
-            import font_nanum
-            font_path = font_nanum.NANUM_GOTHIC
-            font_prop = fm.FontProperties(fname=font_path)
-            plt.rcParams['font.family'] = font_prop.get_name()
-            st.success("나눔고딕 폰트 설치 및 적용 완료")
-            return font_prop
-        except ImportError:
-            st.warning("나눔고딕 폰트를 설치할 수 없습니다. 기본 폰트를 사용합니다.")
-            return fm.FontProperties(family='DejaVu Sans')
+        # 폰트를 찾지 못한 경우 기본 폰트 사용
+        st.warning("한글 폰트를 찾을 수 없어 기본 폰트를 사용합니다.")
+        return fm.FontProperties(family='DejaVu Sans')
         
     except Exception as e:
         st.error(f"폰트 설정 중 오류 발생: {str(e)}")
